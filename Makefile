@@ -9,21 +9,21 @@ generate: install-deps .generate
 
 .PHONY: .generate_structs
 .generate_structs:
-	mkdir -p pkg/echo
+	mkdir -p pkg/suggest
 	protoc -I protos \
-		--go_out ./pkg/echo \
+		--go_out ./pkg/suggest \
 		--go_opt plugins=grpc \
 		--go_opt paths=source_relative \
-		protos/echo.proto
+		protos/suggest.proto
 
 .PHONY: .generate_service
 .generate_service:
-	mkdir -p pkg/echo
-	protoc -I protos --grpc-gateway_out ./pkg/echo \
+	mkdir -p pkg/suggest
+	protoc -I protos --grpc-gateway_out ./pkg/suggest \
 			 --grpc-gateway_opt=logtostderr=true \
 			 --grpc-gateway_opt=paths=source_relative \
 			 --grpc-gateway_opt=generate_unbound_methods=true \
-		protos/echo.proto
+		protos/suggest.proto
 
 .PHONY: build
 build: generate .build
@@ -90,7 +90,8 @@ install-go-deps: install-golang .install-go-deps
 .install-go-deps:
 	ls go.mod || go mod init
 	go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
-	go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
+	go get -u github.com/golang/protobuf/proto
+	go get -u github.com/golang/protobuf/protoc-gen-go
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
 .PHONY: install-cpp-deps
@@ -114,7 +115,7 @@ install-cmake: install-brew .install-cmake
 .install-cmake:
 	which cmake || brew install cmake
 
-GRPC_CPP_PLUGIN_EXISTS := $(shell PATH=$PATH:$HOME/bin which grpc_cpp_plugin 2> /dev/null)
+GRPC_CPP_PLUGIN_EXISTS := $(shell PATH=$$PATH:$$HOME/bin which grpc_cpp_plugin 2> /dev/null)
 
 .PHONY: .install-cpp-deps
 .install-cpp-deps:
@@ -137,9 +138,9 @@ config: install-gsed .config
 
 .PHONY: install-gsed
 install-gsed:
-	which gsed || brew install gsed
+	which sed || brew install sed
 
 GO_PACKAGE_PATH:=$(shell pwd | sed -e "s,.*go\/src/github.com/\(.*\),\1,")
 .PHONY: .config
 .config:
-	gsed -i 's,bmstu-iu8-cpp-sem-3/lab-07-grpc,$(GO_PACKAGE_PATH),' gateway.go
+	sed -i 's,bmstu-iu8-cpp-sem-3/lab-07-grpc,$(GO_PACKAGE_PATH),' gateway.go

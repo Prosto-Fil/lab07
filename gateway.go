@@ -10,13 +10,13 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
 
-	gw "github.com/bmstu-iu8-cpp-sem-3/lab-07-grpc/pkg/echo"
+	gw "github.com/iu8-31-cpp-2020/lab07/pkg/suggest"
 )
 
 var (
 	// command-line options:
 	// gRPC server endpoint
-	grpcServerEndpoint = flag.String("grpc-server-endpoint", "localhost:9090", "gRPC server endpoint")
+	grpcServerEndpoint = flag.String("grpc-server-endpoint", "localhost:8080", "gRPC server endpoint")
 )
 
 func run() error {
@@ -28,13 +28,13 @@ func run() error {
 	// Note: Make sure the gRPC server is running properly and accessible
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
-	err := gw.RegisterEchoHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
+	err := gw.RegisterSuggestHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
 	if err != nil {
 		return err
 	}
 
 	// Start HTTP server (and proxy calls to gRPC server endpoint)
-	serverAddress := "0.0.0.0:8080"
+	serverAddress := "0.0.0.0:9090"
 	fmt.Printf("Server listening on %s\n", serverAddress)
 	return http.ListenAndServe(serverAddress, mux)
 }
