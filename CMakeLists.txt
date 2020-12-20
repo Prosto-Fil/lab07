@@ -117,7 +117,7 @@ add_test(NAME unit_tests COMMAND tests)
 if(BUILD_COVERAGE)
     function(ENABLE_PROJECT_COVERAGE PROJECT)
         target_compile_options(${PROJECT} PRIVATE --coverage)
-        target_link_libraries(${PROJECT} --coverage)
+        target_link_libraries(${PROJECT} PRIVATE --coverage)
         add_coverage(${PROJECT})
     endfunction()
 
