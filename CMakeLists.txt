@@ -16,7 +16,7 @@ include("tools/gate/cmake/HunterGate.cmake")
 HunterGate(
         URL "https://github.com/cpp-pm/hunter/archive/v0.23.278.tar.gz"
         SHA1 "35fa55bc1dfcf9f4d7264f8bb26cd1759ce1ae07"
-        # FILEPATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.cmake"
+        FILEPATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.cmake"
 )
 
 project(lab07)
@@ -84,16 +84,16 @@ add_custom_command(
         ${PROTO_FILES}
         DEPENDS ${PROTO_FILES})
 
-add_library(suggestions STATIC
+add_library(lab07 STATIC
         ${CMAKE_CURRENT_SOURCE_DIR}/sources/suggestions.cpp
         ${PROTO_GENERATED_SOURCES}
         ${PROTO_GENERATED_GRPC_SOURCES})
 
-target_include_directories(suggestions PUBLIC
+target_include_directories(lab07 PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(suggestions PUBLIC
+target_link_libraries(lab07 PUBLIC
         gRPC::grpc++ gRPC::grpc++_reflection
         protobuf::libprotobuf
         nlohmann_json::nlohmann_json)
@@ -109,7 +109,7 @@ target_include_directories(grpc_service PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(tests GTest::gtest_main lab07)
 
-target_link_libraries(grpc_service PUBLIC suggestions)
+target_link_libraries(grpc_service PUBLIC lab07)
 
 enable_testing()
 add_test(NAME unit_tests COMMAND tests)
