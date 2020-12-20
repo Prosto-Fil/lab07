@@ -16,7 +16,7 @@ include("tools/gate/cmake/HunterGate.cmake")
 HunterGate(
         URL "https://github.com/cpp-pm/hunter/archive/v0.23.278.tar.gz"
         SHA1 "35fa55bc1dfcf9f4d7264f8bb26cd1759ce1ae07"
-        FILEPATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.cmake"
+        # FILEPATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.cmake"
 )
 
 project(lab07)
@@ -125,7 +125,7 @@ if(BUILD_COVERAGE)
     list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
     find_package(codecov)
     # TODO: change template word to project name and delete this comment
-    enable_project_coverage(lab06)
+    enable_project_coverage(lab07)
     enable_project_coverage(tests)
     list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/tests/*'")
     coverage_evaluate()
