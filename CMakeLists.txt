@@ -107,7 +107,7 @@ add_executable(grpc_service
 
 target_include_directories(grpc_service PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(tests GTest::gtest_main lab07)
+target_link_libraries(tests PRIVATE GTest::gtest_main lab07)
 
 target_link_libraries(grpc_service PUBLIC lab07)
 
