@@ -8,7 +8,7 @@
 #include <fstream>
 #include <thread>
 
-#define forever for(;;)
+#define forever for (;;)
 
 namespace suggest {
   void from_json(const nlohmann::json& j, suggest::SuggestAnswer& answer) {
@@ -18,8 +18,8 @@ namespace suggest {
 }
 
 grpc::Status SuggestServiceAnswer::Answer(grpc::ServerContext* context,
-                                          const suggest::SuggestRequest* request,
-                                          suggest::SuggestResponse* response) {
+                                        const suggest::SuggestRequest* request,
+                                        suggest::SuggestResponse* response) {
   nlohmann::json suggestions_sort = suggestions;
   std::sort(suggestions_sort.begin(), suggestions_sort.end(),
             [](const nlohmann::json& left, const nlohmann::json& right)

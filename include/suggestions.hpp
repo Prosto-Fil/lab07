@@ -1,7 +1,7 @@
 // Copyright 2018 Your Name <your_email>
 
-#ifndef SUGGESTSERVICE_SUGGESTIONS_HPP
-#define SUGGESTSERVICE_SUGGESTIONS_HPP
+#ifndef INCLUDE_SUGGESTIONS_HPP_
+#define INCLUDE_SUGGESTIONS_HPP_
 
 #include <suggest.grpc.pb.h>
 #include <shared_mutex>
@@ -22,4 +22,4 @@ class SuggestServiceAnswer : public suggest::Suggest::Service {
   SuggestServiceAnswer();
 };
 
-#endif  // SUGGESTSERVICE_SUGGESTIONS_HPP
+#endif  // INCLUDE_SUGGESTIONS_HPP_
