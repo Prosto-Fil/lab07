@@ -36,7 +36,6 @@ find_package(Protobuf CONFIG REQUIRED)
 hunter_add_package(nlohmann_json)
 find_package(nlohmann_json CONFIG REQUIRED)
 
-
 set(PROTO_GENERATED_SOURCES
         "${CMAKE_CURRENT_BINARY_DIR}/suggest.pb.cc"
         "${CMAKE_CURRENT_BINARY_DIR}/google/api/annotations.pb.cc"
@@ -92,18 +91,42 @@ add_library(suggestions STATIC
 
 target_include_directories(suggestions PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
-        PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
-        )
+        PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(suggestions PUBLIC
         gRPC::grpc++ gRPC::grpc++_reflection
         protobuf::libprotobuf
         nlohmann_json::nlohmann_json)
 
+add_executable(tests
+        # TODO: enum your files and delete this comment
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp)
 
 add_executable(grpc_service
         ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp sources/suggestions.cpp)
 
 target_include_directories(grpc_service PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
+target_link_libraries(tests GTest::gtest_main lab07)
+
 target_link_libraries(grpc_service PUBLIC suggestions)
+
+enable_testing()
+add_test(NAME unit_tests COMMAND tests)
+
+if(BUILD_COVERAGE)
+    function(ENABLE_PROJECT_COVERAGE PROJECT)
+        target_compile_options(${PROJECT} PRIVATE --coverage)
+        target_link_libraries(${PROJECT} --coverage)
+        add_coverage(${PROJECT})
+    endfunction()
+
+    set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+    find_package(codecov)
+    # TODO: change template word to project name and delete this comment
+    enable_project_coverage(lab06)
+    enable_project_coverage(tests)
+    list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/tests/*'")
+    coverage_evaluate()
+endif()
