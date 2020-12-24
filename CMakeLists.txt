@@ -109,21 +109,23 @@ target_link_libraries(lab07 PUBLIC
         protobuf::libprotobuf
         nlohmann_json::nlohmann_json)
 
-add_executable(tests
-        # TODO: enum your files and delete this comment
-        ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp)
-
 add_executable(grpc_service
         ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp sources/suggestions.cpp)
 
 target_include_directories(grpc_service PRIVATE ${API_GENERATED_DIR})
 
-target_link_libraries(tests PRIVATE GTest::gtest_main lab07)
-
 target_link_libraries(grpc_service PUBLIC lab07)
 
-enable_testing()
+if ("${CMAKE_PROJECT_NAME}" STREQUAL "${PROJECT_NAME}")
+    add_executable(tests
+        # TODO: enum your files and delete this comment
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp)
+
+    target_link_libraries(tests PRIVATE GTest::gtest_main lab07)
+
+    enable_testing()
 add_test(NAME unit_tests COMMAND tests)
+endif()
 
 if(BUILD_COVERAGE)
     function(ENABLE_PROJECT_COVERAGE PROJECT)
@@ -137,7 +139,9 @@ if(BUILD_COVERAGE)
     find_package(codecov)
     # TODO: change template word to project name and delete this comment
     enable_project_coverage(lab07)
-    enable_project_coverage(tests)
+    if ("${CMAKE_PROJECT_NAME}" STREQUAL "${PROJECT_NAME}")
+        enable_project_coverage(tests)
+    endif()
     list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/tests/*'")
     coverage_evaluate()
 endif()
