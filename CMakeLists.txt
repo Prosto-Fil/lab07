@@ -36,29 +36,32 @@ find_package(Protobuf CONFIG REQUIRED)
 hunter_add_package(nlohmann_json)
 find_package(nlohmann_json CONFIG REQUIRED)
 
+set(API_GENERATED_DIR
+        ${CMAKE_CURRENT_SOURCE_DIR}/ccpkg)
+
 set(PROTO_GENERATED_SOURCES
-        "${CMAKE_CURRENT_BINARY_DIR}/suggest.pb.cc"
-        "${CMAKE_CURRENT_BINARY_DIR}/google/api/annotations.pb.cc"
-        "${CMAKE_CURRENT_BINARY_DIR}/google/api/http.pb.cc"
-        "${CMAKE_CURRENT_BINARY_DIR}/google/rpc/status.pb.cc")
+        "${API_GENERATED_DIR}/suggest.pb.cc"
+        "${API_GENERATED_DIR}/google/api/annotations.pb.cc"
+        "${API_GENERATED_DIR}/google/api/http.pb.cc"
+        "${API_GENERATED_DIR}/google/rpc/status.pb.cc")
 
 set(PROTO_GENERATED_HEADERS
-        "${CMAKE_CURRENT_BINARY_DIR}/suggest.pb.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/google/api/annotations.pb.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/google/api/http.pb.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/google/rpc/status.pb.h")
+        "${API_GENERATED_DIR}/suggest.pb.h"
+        "${API_GENERATED_DIR}/google/api/annotations.pb.h"
+        "${API_GENERATED_DIR}/google/api/http.pb.h"
+        "${API_GENERATED_DIR}/google/rpc/status.pb.h")
 
 set(PROTO_GENERATED_GRPC_SOURCES
-        "${CMAKE_CURRENT_BINARY_DIR}/suggest.grpc.pb.cc"
-        "${CMAKE_CURRENT_BINARY_DIR}/google/api/annotations.grpc.pb.cc"
-        "${CMAKE_CURRENT_BINARY_DIR}/google/api/http.grpc.pb.cc"
-        "${CMAKE_CURRENT_BINARY_DIR}/google/rpc/status.grpc.pb.cc" include/suggestions.hpp)
+        "${API_GENERATED_DIR}/suggest.grpc.pb.cc"
+        "${API_GENERATED_DIR}/google/api/annotations.grpc.pb.cc"
+        "${API_GENERATED_DIR}/google/api/http.grpc.pb.cc"
+        "${API_GENERATED_DIR}/google/rpc/status.grpc.pb.cc" include/suggestions.hpp)
 
 set(PROTO_GENERATED_GRPC_HEADERS
-        "${CMAKE_CURRENT_BINARY_DIR}/suggest.grpc.pb.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/google/api/annotations.grpc.pb.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/google/api/http.grpc.pb.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/google/rpc/status.grpc.pb.h")
+        "${API_GENERATED_DIR}/suggest.grpc.pb.h"
+        "${API_GENERATED_DIR}/google/api/annotations.grpc.pb.h"
+        "${API_GENERATED_DIR}/google/api/http.grpc.pb.h"
+        "${API_GENERATED_DIR}/google/rpc/status.grpc.pb.h")
 
 find_program(PROTOBUF_PROTOC protoc)
 find_program(GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
@@ -77,12 +80,20 @@ add_custom_command(
         ${PROTO_GENERATED_GRPC_HEADERS}
         COMMAND protobuf::protoc
         ARGS
-        --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
-        --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
+        --grpc_out "${API_GENERATED_DIR}"
+        --cpp_out "${API_GENERATED_DIR}"
         -I"${PROTO_INCLUDE_DIR}"
         --plugin=protoc-gen-grpc="${GRPC_CPP_PLUGIN_EXECUTABLE}"
         ${PROTO_FILES}
         DEPENDS ${PROTO_FILES})
+
+add_custom_target(generate
+        DEPENDS
+        ${PROTO_GENERATED_SOURCES}
+        ${PROTO_GENERATED_HEADERS}
+        ${PROTO_GENERATED_GRPC_SOURCES}
+        ${PROTO_GENERATED_GRPC_HEADERS}
+        )
 
 add_library(lab07 STATIC
         ${CMAKE_CURRENT_SOURCE_DIR}/sources/suggestions.cpp
@@ -91,7 +102,7 @@ add_library(lab07 STATIC
 
 target_include_directories(lab07 PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
-        PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+        PRIVATE ${API_GENERATED_DIR})
 
 target_link_libraries(lab07 PUBLIC
         gRPC::grpc++ gRPC::grpc++_reflection
@@ -105,7 +116,7 @@ add_executable(tests
 add_executable(grpc_service
         ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp sources/suggestions.cpp)
 
-target_include_directories(grpc_service PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(grpc_service PRIVATE ${API_GENERATED_DIR})
 
 target_link_libraries(tests PRIVATE GTest::gtest_main lab07)
 
