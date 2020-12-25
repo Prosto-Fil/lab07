@@ -1,3 +1,10 @@
+/gateway
+pkg/
+*build*/
+*logs*/
+suggestion.json
+!ccpkg/.gitkeep
+
 # Created by https://www.toptal.com/developers/gitignore/api/clion+all,visualstudio,visualstudiocode,cmake,xcode,c++
 # Edit at https://www.toptal.com/developers/gitignore?templates=clion+all,visualstudio,visualstudiocode,cmake,xcode,c++
 
